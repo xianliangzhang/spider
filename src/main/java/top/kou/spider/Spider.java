@@ -4,11 +4,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import sexy.kome.core.helper.ConfigHelper;
-import sexy.kome.spider.container.Container;
-import sexy.kome.spider.container.impl.DatabaseContainer;
-import sexy.kome.spider.processer.Processor;
-import sexy.kome.spider.processer.impl.ImageProcessor;
+import top.kou.core.helper.ConfigHelper;
+import top.kou.spider.container.Container;
+import top.kou.spider.container.impl.DatabaseContainer;
+import top.kou.spider.processer.Processor;
+import top.kou.spider.processer.impl.ImageProcessor;
 
 import java.util.HashSet;
 import java.util.Set;

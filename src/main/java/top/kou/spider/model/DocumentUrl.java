@@ -1,6 +1,5 @@
 package top.kou.spider.model;
 
-import javax.print.Doc;
 import java.util.Date;
 
 /**

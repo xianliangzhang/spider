@@ -1,19 +1,19 @@
 package top.kou.spider.processer.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
-import sun.security.provider.MD5;
 import top.kou.core.helper.ConfigHelper;
 import top.kou.spider.Spider;
 import top.kou.spider.processer.Processor;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 /**
@@ -75,9 +75,8 @@ public class ImageProcessor implements Processor {
             outputStream.flush();
             outputStream.getFD().sync();
 
-            IOUtils.closeQuietly(inputStream);
-            IOUtils.closeQuietly(outputStream);
-            IOUtils.close(urlConnection);
+            inputStream.close();
+            outputStream.close();
 
             // 校验文件大小
             if (totalSize < MIN_IMAGE_SIZE || totalSize > MAX_IMAGE_SIZE) {
@@ -97,7 +96,7 @@ public class ImageProcessor implements Processor {
     // 按文件MD5值对文件重命名
     private File rename2md5hex(File file) throws Exception {
         if (null != file && file.exists()) {
-            File targetMD5File = new File(getAbsFileName(MD5FileUtils.computeMd5ForFile(file).toString().concat(file.getName().substring(file.getName().lastIndexOf(".")))));
+            File targetMD5File = new File(getAbsFileName(getFileMD5(file).concat(file.getName().substring(file.getName().lastIndexOf(".")))));
             if (targetMD5File.exists()) {
                 file.delete();
                 RUN_LOG.debug(String.format("File-exists [uuid-file=%s, md5-file=%s]", file.getName(), targetMD5File.getName()));
@@ -110,7 +109,34 @@ public class ImageProcessor implements Processor {
         return null;
     }
 
+    public static String getFileMD5(File file) throws FileNotFoundException {
+        String value = null;
+        FileInputStream in = new FileInputStream(file);
+        try {
+            MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(byteBuffer);
+            BigInteger bi = new BigInteger(1, md5.digest());
+            value = bi.toString(16);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return value;
+    }
+
     private String getAbsFileName(String fileName) {
         return STORE_IMG_DIR.concat("/").concat(StringUtils.isEmpty(fileName) ? UUID.randomUUID().toString() : fileName);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println( ImageProcessor.getFileMD5(new File("/Users/Hack/Downloads/58d770c6f9c94c4ee74749a0ba914eef.jpg")));
     }
 }
