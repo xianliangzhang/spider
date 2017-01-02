@@ -75,6 +75,13 @@ public class Spider {
         String originURL = args.length > 0 ? args[0] : ConfigHelper.get("spider.source.url");
         new Spider(originURL, new DatabaseContainer(), ImageProcessor.class).start();
 
+//        SqlSessionFactory factory = CacheHelper.getSqlSessionFactory();
+        //factory.getConfiguration().addMapper(TestMapper.class);
+//        SqlSession session = factory.openSession();
+//        TestMapper testMapper = (TestMapper)session.getMapper(TestMapper.class);
+//        TestDomain domain = testMapper.find(2);
+//        System.out.println(domain.getDescription());
+
     }
 
 }

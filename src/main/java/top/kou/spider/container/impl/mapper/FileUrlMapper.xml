@@ -14,7 +14,7 @@
         select * from spider_file_url where url=#{0} limit 1
     </select>
 
-    <insert id="save" parameterType="sexy.kome.spider.model.FileUrl" useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="top.kou.spider.model.FileUrl" useGeneratedKeys="true" keyProperty="id">
         insert into spider_file_url(url, type, create_time)
           select #{url}, #{type}, now() from dual
             where not exists (select * from spider_file_url where url=#{url}) limit 1
